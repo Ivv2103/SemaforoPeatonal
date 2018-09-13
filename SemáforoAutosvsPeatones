@@ -1,0 +1,68 @@
+# Semaforo Peatonal
+Programa en arduino para semáforo y cruce de peatones.
+
+int carRed = 12; //Asignacion de luces de semáforo de autos
+int carYellow = 11;
+int carGreen = 10;
+int pedRed = 9; //Asignacion de luces de semáforo de peatones
+int pedGreen = 8;
+int button = 2; // Asignacion de pin en arduino 
+int crossTime = 5000; //Tiempo permitido para cruzar
+unsigned long changeTime; //Tiempo desde que se presionó el botón
+void setup() {
+ pinMode(carRed, OUTPUT);
+ pinMode(carYellow, OUTPUT);
+ pinMode(carGreen, OUTPUT);
+ pinMode(pedRed, OUTPUT);
+ pinMode(pedGreen, OUTPUT);
+ pinMode(button, INPUT); //boton en el pin 2 
+ // enciende la luz verde
+ digitalWrite(carGreen, HIGH);
+ digitalWrite(pedRed, HIGH);
+}
+void loop() {
+ int state = digitalRead(button);
+/ * compruebe si se presiona el botón y es más de 5 segundos desde la última vez que presiona el botón * /
+
+ if (state == HIGH && (millis() - changeTime) > 5000) {
+// Llamar a la función ChageLights
+
+ changeLights();
+ }
+}
+void changeLights() {
+ digitalWrite(carGreen, LOW); //Luz verde de semáforo de autos se apaga 
+ digitalWrite(carYellow, HIGH); //Luz amarilla de semáforo de autos hace el cambio en 2seg
+ delay(2000);
+
+ digitalWrite(carYellow, LOW);//Luz amarilla de semáforo de autos se apaga 
+ digitalWrite(carRed, HIGH); //Luz roja de semáforo de autos hace el cambio en 1seg 
+ delay(1000); 
+
+ digitalWrite(pedRed, LOW);//Luz roja de semáforo de peatones se apaga 
+ digitalWrite(pedGreen, HIGH);//Luz verde de semáforo de peatones enciende 
+ delay(crossTime);
+
+ 
+ for (int x=0; x<10; x++) {
+ digitalWrite(pedGreen, HIGH);
+ delay(250);
+ digitalWrite(pedGreen, LOW);
+ delay(250);
+ }
+ 
+ digitalWrite(pedRed, HIGH);//Pone luz roja en semáforo peatonal
+ delay(500);
+
+ digitalWrite(carYellow, HIGH);
+ digitalWrite(carRed, LOW); 
+ delay(1000);
+ digitalWrite(carGreen, HIGH);
+ digitalWrite(carYellow, LOW);
+
+ 
+// registra el tiempo desde el último cambio de luces
+ changeTime = millis();
+ 
+// luego regrese al ciclo principal del programa
+}
